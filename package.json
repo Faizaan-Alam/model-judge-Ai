@@ -1,0 +1,21 @@
+{
+  "name": "modeljudge-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ModelJudge AI — explainable multi-criteria evaluation for tabular supervised models",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w @modeljudge/api",
+    "dev:worker": "npm run dev -w @modeljudge/worker",
+    "dev:web": "npm run dev -w @modeljudge/web",
+    "build": "npm run build -w @modeljudge/shared && npm run build -w @modeljudge/api && npm run build -w @modeljudge/worker && npm run build -w @modeljudge/web",
+    "lint": "npm run lint -w @modeljudge/api --if-present && npm run lint -w @modeljudge/web --if-present",
+    "test": "npm run test -w @modeljudge/shared --if-present && npm run test -w @modeljudge/api --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
