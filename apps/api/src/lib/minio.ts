@@ -27,16 +27,12 @@ export async function ensureBucket(): Promise<void> {
 
 export async function putObject(
   key: string,
-  data: Buffer | NodeJS.ReadableStream,
-  size?: number,
+  data: Buffer,
+  _size?: number,
   meta?: Record<string, string>
 ): Promise<void> {
   const c = getMinio();
-  if (Buffer.isBuffer(data)) {
-    await c.putObject(config.minio.bucket, key, data, data.length, meta);
-  } else {
-    await c.putObject(config.minio.bucket, key, data, size, meta);
-  }
+  await c.putObject(config.minio.bucket, key, data, data.length, meta);
 }
 
 export async function presignedGet(key: string, expirySec = 900): Promise<string> {

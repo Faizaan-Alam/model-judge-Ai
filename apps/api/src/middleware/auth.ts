@@ -11,6 +11,10 @@ export interface AuthUser {
 
 export type AuthedRequest = Request & { user: AuthUser; requestId?: string };
 
+export function asAuth(req: Request): AuthedRequest {
+  return req as unknown as AuthedRequest;
+}
+
 export function requireAuth(req: Request, _res: Response, next: NextFunction): void {
   const header = req.headers.authorization;
   if (!header?.startsWith("Bearer ")) {
@@ -19,12 +23,12 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
   const token = header.slice(7);
   try {
     const payload = jwt.verify(token, config.jwtSecret) as AuthUser & { sub?: string };
-    (req as AuthedRequest).user = {
+    asAuth(req).user = {
       id: payload.id || payload.sub || "",
       email: payload.email,
       role: payload.role || "user",
     };
-    if (!(req as AuthedRequest).user.id) {
+    if (!asAuth(req).user.id) {
       return next(new AppError(401, "UNAUTHORIZED", "Invalid token payload"));
     }
     next();

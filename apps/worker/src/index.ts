@@ -1,5 +1,4 @@
 import { Worker } from "bullmq";
-import IORedis from "ioredis";
 import { connectDb } from "./db";
 import { config } from "./config";
 import { processProfile } from "./processors/profile";
@@ -7,7 +6,7 @@ import { processRunExperiment } from "./processors/runExperiment";
 
 async function main() {
   await connectDb();
-  const connection = new IORedis(config.redisUrl, { maxRetriesPerRequest: null });
+  const connection = { url: config.redisUrl, maxRetriesPerRequest: null as null };
 
   const profileWorker = new Worker("mj.profile", processProfile, {
     connection,
@@ -15,7 +14,7 @@ async function main() {
   });
 
   const workflowWorker = new Worker("mj.workflow", processRunExperiment, {
-    connection: connection.duplicate(),
+    connection: { url: config.redisUrl, maxRetriesPerRequest: null as null },
     concurrency: 1,
   });
 

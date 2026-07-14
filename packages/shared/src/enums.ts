@@ -64,13 +64,21 @@ export const JOB_STATUSES = [
 ] as const;
 export type JobStatus = (typeof JOB_STATUSES)[number];
 
-export const DEFAULT_MJS_WEIGHTS = {
+export type MjsWeights = {
+  performance: number;
+  robustness: number;
+  efficiency: number;
+  explainability: number;
+  reproducibility: number;
+};
+
+export const DEFAULT_MJS_WEIGHTS: MjsWeights = {
   performance: 0.35,
   robustness: 0.2,
   efficiency: 0.15,
   explainability: 0.15,
   reproducibility: 0.15,
-} as const;
+};
 
 export const MJS_VERSION = "1.0.0";
 

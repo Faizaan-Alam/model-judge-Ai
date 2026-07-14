@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "tsx src/lib/weights.test.ts && tsx src/lib/status.test.ts"
   },
   "dependencies": {
     "@modeljudge/shared": "*",
@@ -26,6 +27,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
   }

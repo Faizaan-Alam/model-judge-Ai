@@ -124,6 +124,19 @@ Dimensions normalized with **minmax across models** in the experiment. Default f
 - Do not load user-uploaded pickle models.
 - Change `JWT_SECRET` and `SERVICE_TOKEN` before any shared deployment.
 
+## Testing
+
+```bash
+npm run test -w @modeljudge/shared
+npm run test -w @modeljudge/api
+npm run test -w @modeljudge/worker
+npm run test -w @modeljudge/web
+cd services/ml-service && source .venv/bin/activate && pytest -q
+# or: npm test   (all of the above if venv exists)
+```
+
+See [docs/TESTING.md](docs/TESTING.md) for the test pyramid and research-aligned assertions.
+
 ## Project phases
 
 1. Literature review (complete)  
@@ -132,8 +145,8 @@ Dimensions normalized with **minmax across models** in the experiment. Default f
 4. ML pipeline design (complete)  
 5. Frontend design (complete)  
 6. Express integration design (complete)  
-7. **Implementation (this scaffold)**  
-8. Testing  
+7. Implementation (complete)  
+8. **Testing (complete)**  
 9. Deployment polish  
 10. Research paper  
 

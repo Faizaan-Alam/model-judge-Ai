@@ -63,20 +63,10 @@ const experimentSchema = new Schema<IExperiment>(
       explainCompleted: { type: Number, default: 0 },
       percent: { type: Number, default: 0 },
     },
-    rankingSummary: { type: [Schema.Types.Mixed], default: [] },
+    rankingSummary: { type: Schema.Types.Mixed, default: [] },
     primaryMjsScoreId: { type: Schema.Types.ObjectId, ref: "MjsScore" },
     reportId: { type: Schema.Types.ObjectId, ref: "Report" },
-    timeline: {
-      type: [
-        {
-          at: Date,
-          status: String,
-          stage: String,
-          message: String,
-        },
-      ],
-      default: [],
-    },
+    timeline: { type: Schema.Types.Mixed, default: [] },
     error: {
       code: String,
       message: String,

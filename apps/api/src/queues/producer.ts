@@ -1,11 +1,11 @@
 import { Queue } from "bullmq";
-import { getRedis } from "../lib/redis";
+import { config } from "../config";
 
 let workflowQueue: Queue | null = null;
 let profileQueue: Queue | null = null;
 
 function connection() {
-  return getRedis();
+  return { url: config.redisUrl, maxRetriesPerRequest: null as null };
 }
 
 export function getWorkflowQueue(): Queue {

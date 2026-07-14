@@ -26,7 +26,7 @@ const mjsScoreSchema = new Schema<IMjsScore>(
     method: String,
     weights: { type: Schema.Types.Mixed, default: {} },
     normalization: { type: Schema.Types.Mixed, default: {} },
-    scores: { type: [Schema.Types.Mixed], default: [] },
+    scores: { type: Schema.Types.Mixed, default: [] },
     explainabilityPending: { type: Boolean, default: false },
   },
   { timestamps: true }

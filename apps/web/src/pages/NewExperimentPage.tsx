@@ -17,6 +17,7 @@ type Dataset = {
 };
 
 const PRESETS: Record<string, typeof DEFAULT_MJS_WEIGHTS> = {
+  // weight presets (must sum to 1)
   balanced: { ...DEFAULT_MJS_WEIGHTS },
   accuracy: {
     performance: 0.5,

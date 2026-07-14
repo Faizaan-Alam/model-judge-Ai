@@ -4,7 +4,7 @@ import { loginSchema, registerSchema } from "@modeljudge/shared";
 import { User } from "../models";
 import { validate } from "../middleware/validate";
 import { AppError } from "../middleware/errorHandler";
-import { requireAuth, signToken, AuthedRequest } from "../middleware/auth";
+import { requireAuth, signToken, AuthedRequest, asAuth } from "../middleware/auth";
 
 export const authRouter = Router();
 
@@ -60,7 +60,7 @@ authRouter.post("/login", validate({ body: loginSchema }), async (req, res, next
 
 authRouter.get("/me", requireAuth, async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const doc = await User.findById(user.id).select("-passwordHash");
     if (!doc) throw new AppError(404, "NOT_FOUND", "User not found");
     res.json({

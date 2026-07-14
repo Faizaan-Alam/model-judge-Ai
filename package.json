@@ -13,7 +13,9 @@
     "dev:web": "npm run dev -w @modeljudge/web",
     "build": "npm run build -w @modeljudge/shared && npm run build -w @modeljudge/api && npm run build -w @modeljudge/worker && npm run build -w @modeljudge/web",
     "lint": "npm run lint -w @modeljudge/api --if-present && npm run lint -w @modeljudge/web --if-present",
-    "test": "npm run test -w @modeljudge/shared --if-present && npm run test -w @modeljudge/api --if-present"
+    "test": "npm run test -w @modeljudge/shared && npm run test -w @modeljudge/api && npm run test -w @modeljudge/worker && npm run test -w @modeljudge/web && npm run test:ml",
+    "test:ml": "cd services/ml-service && . .venv/bin/activate && pytest -q",
+    "test:ml:ci": "cd services/ml-service && pytest -q"
   },
   "engines": {
     "node": ">=20"

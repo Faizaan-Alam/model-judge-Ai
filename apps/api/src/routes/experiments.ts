@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createExperimentSchema, modelsForProblem } from "@modeljudge/shared";
 import { z } from "zod";
-import { requireAuth, AuthedRequest } from "../middleware/auth";
+import { requireAuth, AuthedRequest, asAuth } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { AppError } from "../middleware/errorHandler";
 import {
@@ -20,7 +20,7 @@ experimentsRouter.use(requireAuth);
 
 experimentsRouter.get("/", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const status = req.query.status as string | undefined;
     const filter: Record<string, unknown> = { userId: user.id };
     if (status) filter.status = status;
@@ -36,7 +36,7 @@ experimentsRouter.post(
   validate({ body: createExperimentSchema }),
   async (req, res, next) => {
     try {
-      const { user } = req as AuthedRequest;
+      const { user } = asAuth(req);
       const body = req.body as z.infer<typeof createExperimentSchema>;
 
       const ds = await Dataset.findOne({
@@ -100,7 +100,7 @@ experimentsRouter.post(
 
 experimentsRouter.get("/:id", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     res.json({ experiment: exp });
@@ -111,7 +111,7 @@ experimentsRouter.get("/:id", async (req, res, next) => {
 
 experimentsRouter.post("/:id/start", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     if (!["PLAN_READY", "CREATED"].includes(exp.status)) {
@@ -150,7 +150,7 @@ experimentsRouter.post("/:id/start", async (req, res, next) => {
     });
 
     const bullId = await enqueueExperiment({
-      requestId: (req as AuthedRequest).requestId || "",
+      requestId: asAuth(req).requestId || "",
       userId: user.id,
       experimentId: exp._id.toString(),
       jobDocId: jobDoc._id.toString(),
@@ -166,7 +166,7 @@ experimentsRouter.post("/:id/start", async (req, res, next) => {
 
 experimentsRouter.post("/:id/cancel", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     exp.cancelRequested = true;
@@ -187,7 +187,7 @@ experimentsRouter.post("/:id/cancel", async (req, res, next) => {
 
 experimentsRouter.get("/:id/models", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     const items = await ModelRun.find({ experimentId: exp._id }).sort({ modelName: 1 });
@@ -199,7 +199,7 @@ experimentsRouter.get("/:id/models", async (req, res, next) => {
 
 experimentsRouter.get("/:id/mjs", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     const kind = (req.query.kind as string) || "primary";
@@ -214,7 +214,7 @@ experimentsRouter.get("/:id/mjs", async (req, res, next) => {
 
 experimentsRouter.get("/:id/explanations", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     const items = await Explanation.find({ experimentId: exp._id });
@@ -226,7 +226,7 @@ experimentsRouter.get("/:id/explanations", async (req, res, next) => {
 
 experimentsRouter.get("/:id/report", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     const report = await Report.findOne({ experimentId: exp._id });
@@ -238,7 +238,7 @@ experimentsRouter.get("/:id/report", async (req, res, next) => {
 
 experimentsRouter.get("/:id/lineage", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     res.json({ lineage: exp.lineage, mjsConfig: exp.mjsConfig, config: exp.config });
@@ -249,7 +249,7 @@ experimentsRouter.get("/:id/lineage", async (req, res, next) => {
 
 experimentsRouter.get("/:id/jobs", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const exp = await Experiment.findOne({ _id: req.params.id, userId: user.id });
     if (!exp) throw new AppError(404, "NOT_FOUND", "Experiment not found");
     const items = await Job.find({ experimentId: exp._id }).sort({ createdAt: -1 });

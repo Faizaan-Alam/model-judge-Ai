@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import crypto from "crypto";
-import { requireAuth, AuthedRequest } from "../middleware/auth";
+import { requireAuth, AuthedRequest, asAuth } from "../middleware/auth";
 import { AppError } from "../middleware/errorHandler";
 import { Dataset, Job } from "../models";
 import { config } from "../config";
@@ -28,7 +28,7 @@ datasetsRouter.use(requireAuth);
 
 datasetsRouter.get("/", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const items = await Dataset.find({ userId: user.id, deletedAt: null })
       .sort({ createdAt: -1 })
       .limit(100);
@@ -40,7 +40,7 @@ datasetsRouter.get("/", async (req, res, next) => {
 
 datasetsRouter.get("/:id", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const ds = await Dataset.findOne({ _id: req.params.id, userId: user.id, deletedAt: null });
     if (!ds) throw new AppError(404, "NOT_FOUND", "Dataset not found");
     res.json({ dataset: ds });
@@ -51,7 +51,7 @@ datasetsRouter.get("/:id", async (req, res, next) => {
 
 datasetsRouter.post("/", upload.single("file"), async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const file = req.file;
     if (!file) throw new AppError(400, "VALIDATION_ERROR", "file is required");
 
@@ -86,7 +86,7 @@ datasetsRouter.post("/", upload.single("file"), async (req, res, next) => {
     });
 
     const bullId = await enqueueProfile({
-      requestId: (req as AuthedRequest).requestId || "",
+      requestId: asAuth(req).requestId || "",
       userId: user.id,
       datasetId: ds._id.toString(),
       jobDocId: jobDoc._id.toString(),
@@ -102,7 +102,7 @@ datasetsRouter.post("/", upload.single("file"), async (req, res, next) => {
 
 datasetsRouter.delete("/:id", async (req, res, next) => {
   try {
-    const { user } = req as AuthedRequest;
+    const { user } = asAuth(req);
     const ds = await Dataset.findOne({ _id: req.params.id, userId: user.id, deletedAt: null });
     if (!ds) throw new AppError(404, "NOT_FOUND", "Dataset not found");
     ds.deletedAt = new Date();

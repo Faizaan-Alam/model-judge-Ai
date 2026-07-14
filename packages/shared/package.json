@@ -12,7 +12,8 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "tsc -p tsconfig.json --watch"
+    "dev": "tsc -p tsconfig.json --watch",
+    "test": "tsc -p tsconfig.json && npx tsx src/schemas.test.ts"
   },
   "dependencies": {
     "zod": "^3.23.8"
